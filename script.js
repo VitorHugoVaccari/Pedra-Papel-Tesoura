@@ -26,7 +26,7 @@ function getComputerChoice() {
 
 function playRound(humanChoise, computerChoise) {
   if (humanChoise === computerChoise) {
-    console.log("Empate, ninguem ganhou ponto");
+    result.innerHTML += '<p class="message message--tie">Empate, ninguém ganhou ponto.</p>';
     return "empate";
   }
 
@@ -35,44 +35,56 @@ function playRound(humanChoise, computerChoise) {
     (humanChoise === "Papel" && computerChoise === "Pedra") ||
     (humanChoise === "Tesoura" && computerChoise === "Papel")
   ) {
-    console.log(`Você venceu! ${humanChoise} vence ${computerChoise}`);
+    result.innerHTML += `<p class="message message--win">Você venceu! ${humanChoise} vence ${computerChoise}.</p>`;
     return "humano";
   } else {
-    console.log(`Você perdeu! ${computerChoise} vence ${humanChoise}`);
+    result.innerHTML += `<p class="message message--lose">Você perdeu! ${computerChoise} vence ${humanChoise}.</p>`;
     return "computador";
   }
 }
 
-function playGame() {
-  let humanScore = 0;
-  let computerScore = 0;
+function playGame(hChoise) {
+  result.innerHTML = "";
 
-  for (let i = 0; i < 5; i++) {
-    let choise = prompt("Escolha: Pedra, Papel ou Tesoura").toLowerCase();
+  let humanChoise = getHumanChoise(hChoise);
+  let computerChoise = getComputerChoice();
 
-    let humanChoise = getHumanChoise(choise);
-    let computerChoise = getComputerChoice();
+  let resultado = playRound(humanChoise, computerChoise);
 
-    let resultado = playRound(humanChoise, computerChoise);
-
-    if (resultado === "humano") {
-      humanScore++;
-    } else if (resultado === "computador") {
-      computerScore++;
-    }
+  if (resultado === "humano") {
+    humanScore++;
+  } else if (resultado === "computador") {
+    computerScore++;
   }
+  result.classList.add("pronto");
+  result.innerHTML += `<p class="score">A sua pontuação é ${humanScore} e a do computador é ${computerScore}!</p>`;
 
-  console.log("Fim de Jogo");
-  console.log(`Você fez ${humanScore} pontos!`);
-  console.log(`O robô fez ${computerScore} pontos!`);
+  if (humanScore === 5 || computerScore === 5) {
+    result.innerHTML += `<p class="message">Fim de Jogo</p>
+  <p class="message">Você fez ${humanScore} pontos!</p>
+  <p class="message">O robô fez ${computerScore} pontos!</p>`;
 
-  if (humanScore === computerScore) {
-    console.log("O jogo terminou em empate");
-  } else if (humanScore > computerScore) {
-    console.log("Você ganhou o jogo!");
-  } else {
-    console.log("Você perdeu o jogo!");
+    if (humanScore === computerScore) {
+      result.innerHTML += "<p class=\"message message--tie\">O jogo terminou em empate.</p>";
+    } else if (humanScore > computerScore) {
+      result.innerHTML += "<p class=\"message message--win\">Você ganhou o jogo!</p>";
+    } else {
+      result.innerHTML += "<p class=\"message message--lose\">Você perdeu o jogo!</p>";
+    }
+
+    humanScore = 0;
+    computerScore = 0;
   }
 }
 
-playGame();
+let humanScore = 0;
+let computerScore = 0;
+
+let choise = document.querySelectorAll(".btn");
+let result = document.getElementById("resultados");
+
+choise.forEach((btn) => {
+  btn.addEventListener("click", function () {
+    playGame(btn.value);
+  });
+});
